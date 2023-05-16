@@ -85,8 +85,8 @@ public class UtilidadesF1Test {
     @Test
     public void testTopMejoresCoches() {
         List<Coche> coches = new ArrayList<>();
-        Coche coche1 = new Coche(350.0, 4.2, 12.0, 0.05);
-        Coche coche2 = new Coche(355.0, 4.0, 11.5, 0.06);
+        Coche coche1 = new Coche(390.0, 4.2, 12.0, 0.05);
+        Coche coche2 = new Coche(400.0, 4.0, 11.5, 0.06);
         Coche coche3 = new Coche(345.0, 4.5, 12.5, 0.04);
         coches.add(coche1);
         coches.add(coche2);
@@ -96,8 +96,9 @@ public class UtilidadesF1Test {
         List<Coche> cochesTop = UtilidadesF1.topMejoresCoches(coches, minimoPuntuacionRequerida);
 
         List<Coche> expectedCochesTop = new ArrayList<>();
-        expectedCochesTop.add(coche1);
         expectedCochesTop.add(coche2);
+        expectedCochesTop.add(coche1);
+        expectedCochesTop.add(coche3);
 
         assertEquals(expectedCochesTop, cochesTop);
     }

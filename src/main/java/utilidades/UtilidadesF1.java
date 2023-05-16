@@ -2,10 +2,8 @@ package utilidades;
 
 import modelos.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class UtilidadesF1 {
 
@@ -24,7 +22,7 @@ public class UtilidadesF1 {
      * @return
      */
     public static List<Piloto> getPilotosPorMarcaEscuderia(List<Piloto> pilotos, Marca marca){
-        return  new ArrayList<>();
+        return pilotos.stream().filter(p->p.getEscuderia().getMarca().equals(marca)).collect(Collectors.toList());
     }
 
 
@@ -35,7 +33,7 @@ public class UtilidadesF1 {
      * @return
      */
     public static Map<Escuderia, List<Piloto>>  pilotosPorEscuderia(List<Piloto> pilotos){
-        return new HashMap<>();
+        return pilotos.stream().collect(Collectors.groupingBy(Piloto::getEscuderia));
     }
 
 
@@ -48,7 +46,14 @@ public class UtilidadesF1 {
      * @return
      */
     public static List<Coche> topMejoresCoches(List<Coche> coches, Double minimoPuntuacionRequerida){
-        return new ArrayList<>();
+
+        Comparator<Coche> comparator = Comparator.comparing(c-> c.getVelocidadPunta() + c.getAceleracion() -c.getProbabilidadAveria() -c.getTiempoMedioParadaBoxes());
+
+        return coches
+                .stream()
+                .filter(c-> (c.getAceleracion()+ c.getVelocidadPunta() - c.getProbabilidadAveria() -c.getTiempoMedioParadaBoxes()) >minimoPuntuacionRequerida)
+                .sorted(comparator.reversed())
+                .collect(Collectors.toList());
     }
 
 
@@ -65,7 +70,12 @@ public class UtilidadesF1 {
      * @return
      */
     public static Double porcentajeVictoriaPiloto(Piloto piloto){
-        return null;
+        return piloto.getEscuderia().getPuntosRanking() +
+                piloto.getPuntosRanking() +
+                piloto.getEscuderia().getCoche().getAceleracion() +
+                piloto.getEscuderia().getCoche().getVelocidadPunta() -
+                piloto.getEscuderia().getCoche().getTiempoMedioParadaBoxes() -
+                piloto.getEscuderia().getCoche().getProbabilidadAveria();
     }
 
 
@@ -75,7 +85,7 @@ public class UtilidadesF1 {
      *
      */
      public static Piloto getMejorPiloto(Piloto piloto1, Piloto piloto2){
-        return null;
+        return porcentajeVictoriaPiloto(piloto1) > porcentajeVictoriaPiloto(piloto2) ? piloto1 : piloto2;
     }
 
 
@@ -90,7 +100,13 @@ public class UtilidadesF1 {
      * @return
      */
     public static Map<Integer,Escuderia> getRankigPorEscuderias(List<RankingEscuderias> rankingEscuderias, Integer temporada){
-        return new HashMap<>();
+        Map<Integer, Escuderia>  mapa = new HashMap<>();
+        rankingEscuderias
+                .stream()
+                .filter(r->r.getTemporada().equals(temporada))
+                .findFirst()
+                .ifPresent(p->p.getEscuderias().forEach(e-> mapa.put(e.getPosicionEnRanking(),e)));
+        return mapa;
     }
 
 
@@ -103,7 +119,25 @@ public class UtilidadesF1 {
      * @return
      */
     public static Map<Piloto, Double> totalPuntuacion(List<Carrera> carreras){
-        return new HashMap<>();
+
+        Map<Piloto, Double> mapaFinal = new HashMap<>();
+
+        for(Carrera c : carreras){
+
+            for(Integer i : c.getPosiciones().keySet()){
+
+                if(mapaFinal.containsKey(c.getPosiciones().get(i))){
+                    mapaFinal.replace(c.getPosiciones().get(i), mapaFinal.get(c.getPosiciones().get(i))+ c.getPuntosPorPosicion().get(i));
+                }else{
+                    mapaFinal.put(c.getPosiciones().get(i),c.getPuntosPorPosicion().get(i));
+                }
+
+            }
+
+
+        }
+
+        return mapaFinal;
     }
 
 }
