@@ -101,7 +101,7 @@ public class UtilidadesF1 {
      * @return
      */
     public static Map<Integer,Escuderia> getRankigPorEscuderias(List<RankingEscuderias> rankingEscuderias, Integer temporada){
-        return rankingEscuderias.stream().filter(r->r.getTemporada().equals(temporada)).flatMap(e->e.getEscuderias().stream()).collect(Collectors.toMap(Escuderia::getPosicionEnRanking, e->e));
+        return rankingEscuderias.stream().filter(r->r.getTemporada().equals(temporada)).flatMap(t->t.getEscuderias().stream()).collect(Collectors.toMap(Escuderia::getPosicionEnRanking, e->e));
     }
 
 
