@@ -110,7 +110,7 @@ public class UtilidadesF1 {
     public static Map<Integer,Escuderia> getRankigPorEscuderias(List<RankingEscuderias> rankingEscuderias, Integer temporada){
         return rankingEscuderias.stream()
                 .filter(r->r.getTemporada().equals(temporada))
-                .flatMap(t->t.getEscuderias().stream())
+                .flatMap(t->t.getEscuderias().stream())//.findfirst().get().getEscuderias().stream() esta seria otra forma, ademas de tolist() mas get(0);
                 .collect(Collectors.toMap(Escuderia::getPosicionEnRanking, e->e));
     }
 
