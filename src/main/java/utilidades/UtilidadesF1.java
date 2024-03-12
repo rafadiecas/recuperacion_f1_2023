@@ -47,9 +47,13 @@ public class UtilidadesF1 {
      */
     public static List<Coche> topMejoresCoches(List<Coche> coches, Double minimoPuntuacionRequerida){
 
-        Comparator<Coche> comparator = Comparator.comparingDouble(c->c.getVelocidadPunta()+c.getAceleracion()-c.getTiempoMedioParadaBoxes()-c.getProbabilidadAveria());
+        Comparator<Coche> comparator = Comparator.comparingDouble(UtilidadesF1::puntacionCoche); //c-> puntacionCoche(c) otra forma que se puede poner en el comparator
 
-        return coches.stream().filter(c->(c.getVelocidadPunta()+c.getAceleracion()-c.getTiempoMedioParadaBoxes()-c.getProbabilidadAveria())>minimoPuntuacionRequerida).sorted(comparator.reversed()).toList();
+        return coches.stream().filter(c-> puntacionCoche(c) >minimoPuntuacionRequerida).sorted(comparator.reversed()).toList();
+    }
+
+    private static double puntacionCoche(Coche c) {
+        return c.getVelocidadPunta() + c.getAceleracion() - c.getTiempoMedioParadaBoxes() - c.getProbabilidadAveria();
     }
 
 
@@ -67,7 +71,7 @@ public class UtilidadesF1 {
      */
     public static Double porcentajeVictoriaPiloto(Piloto piloto){
 
-        Double puntuacion = piloto.getEscuderia().getCoche().getVelocidadPunta() + piloto.getEscuderia().getCoche().getAceleracion() - piloto.getEscuderia().getCoche().getTiempoMedioParadaBoxes() - piloto.getEscuderia().getCoche().getProbabilidadAveria();
+        Double puntuacion = puntacionCoche(piloto.getEscuderia().getCoche());
 
         return puntuacion + piloto.getEscuderia().getPuntosRanking() + piloto.getPuntosRanking();
     }
@@ -89,6 +93,9 @@ public class UtilidadesF1 {
          } else return new Piloto();
      }
 
+     // return prob1>prob2? piloto1 : prob2>prob1? piloto2 : new Piloto(); condicional en una linea
+    // condicion + ? + valor si es true + : + valor si es false + ;
+
 
     /**
      * Devuelve el mapa de las posiciones obtenidas por las escuderías del ranking de la temporada que se pasa como parámetro,
@@ -101,7 +108,10 @@ public class UtilidadesF1 {
      * @return
      */
     public static Map<Integer,Escuderia> getRankigPorEscuderias(List<RankingEscuderias> rankingEscuderias, Integer temporada){
-        return rankingEscuderias.stream().filter(r->r.getTemporada().equals(temporada)).flatMap(t->t.getEscuderias().stream()).collect(Collectors.toMap(Escuderia::getPosicionEnRanking, e->e));
+        return rankingEscuderias.stream()
+                .filter(r->r.getTemporada().equals(temporada))
+                .flatMap(t->t.getEscuderias().stream())
+                .collect(Collectors.toMap(Escuderia::getPosicionEnRanking, e->e));
     }
 
 
